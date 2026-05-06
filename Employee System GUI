@@ -1,0 +1,264 @@
+package Gatillo566268;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.*;
+import java.util.*;
+
+public class Employee extends JFrame {
+
+    static JTextField employeeID, name, age, dBirth, nationality, cNumber, email, dep, jobT;
+    static JRadioButton rbMale, rbFemale;
+    static String gender, civilStatus, update;
+    static DefaultTableModel model;
+
+    static String[] status = {"Single", "Married", "Widowed", "Separated", "Divorced"};
+
+    Employee() {
+
+        JLabel title = new JLabel("EMS Inc.");
+        add(title).setBounds(30, 20, 100, 20);
+
+        JLabel emID = new JLabel("Employee ID:");
+        add(emID).setBounds(30, 60, 100, 20);
+        employeeID = new JTextField();
+        add(employeeID).setBounds(30, 80, 160, 20);
+
+        JLabel fname = new JLabel("Full Name:");
+        add(fname).setBounds(30, 110, 100, 20);
+        name = new JTextField();
+        add(name).setBounds(30, 130, 160, 20);
+
+        JLabel dob = new JLabel("Date of Birth:");
+        add(dob).setBounds(30, 160, 120, 20);
+        dBirth = new JTextField();
+        add(dBirth).setBounds(30, 180, 160, 20);
+
+        JLabel age1 = new JLabel("Age:");
+        add(age1).setBounds(220, 60, 100, 20);
+        age = new JTextField();
+        add(age).setBounds(220, 80, 160, 20);
+
+        JLabel cStatus = new JLabel("Civil Status:");
+        add(cStatus).setBounds(220, 110, 100, 20);
+        JComboBox<String> CivilStatus = new JComboBox<>(status);
+        add(CivilStatus).setBounds(220, 130, 160, 20);
+
+        JLabel national = new JLabel("Nationality:");
+        add(national).setBounds(220, 160, 100, 20);
+        nationality = new JTextField();
+        add(nationality).setBounds(220, 180, 160, 20);
+
+        JLabel lblGender = new JLabel("Gender:");
+        add(lblGender).setBounds(410, 60, 100, 20);
+        rbMale = new JRadioButton("Male");
+        add(rbMale).setBounds(410, 80, 70, 20);
+        rbFemale = new JRadioButton("Female");
+        add(rbFemale).setBounds(480, 80, 80, 20);
+
+        ButtonGroup genderGroup = new ButtonGroup();
+        genderGroup.add(rbMale);
+        genderGroup.add(rbFemale);
+
+        JLabel contactNum = new JLabel("Contact Number:");
+        add(contactNum).setBounds(410, 110, 120, 20);
+        cNumber = new JTextField();
+        add(cNumber).setBounds(410, 130, 160, 20);
+
+        JLabel myEmail = new JLabel("Email:");
+        add(myEmail).setBounds(410, 160, 100, 20);
+        email = new JTextField();
+        add(email).setBounds(410, 180, 160, 20);
+
+        JLabel department = new JLabel("Department:");
+        add(department).setBounds(600, 110, 100, 20);
+        dep = new JTextField();
+        add(dep).setBounds(600, 130, 160, 20);
+
+        JLabel jobTitle = new JLabel("Job Title / Position:");
+        add(jobTitle).setBounds(600, 160, 150, 20);
+        jobT = new JTextField();
+        add(jobT).setBounds(600, 180, 160, 20);
+
+        JButton addEmp = new JButton("Add Employee");
+        add(addEmp).setBounds(240, 210, 120, 20);
+
+        JButton updEmp = new JButton("Update Employee");
+        add(updEmp).setBounds(420, 210, 140, 20);
+
+        JButton delEmp = new JButton("Delete Employee");
+        add(delEmp).setBounds(615, 210, 130, 20);
+
+        String columns[] = {"Employee ID", "Full Name", "Birth", "Age", "Civil Status",
+                "Nationality", "Gender", "Contact Number", "Email", "Department", "Job Title / Position"};
+
+        model = new DefaultTableModel(columns, 0);
+        JTable table = new JTable(model);
+        JScrollPane scPane = new JScrollPane(table);
+        add(scPane).setBounds(30, 250, 730, 250);
+
+        read();
+
+        table.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent ev) {
+                int row = table.getSelectedRow();
+                if (row != -1) {
+                    employeeID.setText(model.getValueAt(row, 0).toString());
+                    name.setText(model.getValueAt(row, 1).toString());
+                    dBirth.setText(model.getValueAt(row, 2).toString());
+                    age.setText(model.getValueAt(row, 3).toString());
+                    CivilStatus.setSelectedItem(model.getValueAt(row, 4).toString());
+                    nationality.setText(model.getValueAt(row, 5).toString());
+
+                    gender = model.getValueAt(row, 6).toString();
+                    if (gender.equalsIgnoreCase("Male")) rbMale.setSelected(true);
+                    else if (gender.equalsIgnoreCase("Female")) rbFemale.setSelected(true);
+
+                    cNumber.setText(model.getValueAt(row, 7).toString());
+                    email.setText(model.getValueAt(row, 8).toString());
+                    dep.setText(model.getValueAt(row, 9).toString());
+                    jobT.setText(model.getValueAt(row, 10).toString());
+                }
+            }
+        });
+
+        addEmp.addActionListener(e -> {
+            civilStatus = CivilStatus.getSelectedItem().toString();
+
+            if (rbMale.isSelected()) gender = "Male";
+            else if (rbFemale.isSelected()) gender = "Female";
+
+            try {
+                FileWriter fw = new FileWriter("employee.txt", true);
+
+                fw.write(employeeID.getText() + " - " + name.getText() + " - " +
+                        dBirth.getText() + " - " + age.getText() + " - " +
+                        civilStatus + " - " + nationality.getText() + " - " +
+                        gender + " - " + cNumber.getText() + " - " +
+                        email.getText() + " - " + dep.getText() + " - " +
+                        jobT.getText() + "\n");
+
+                fw.close();
+
+                read();
+                JOptionPane.showMessageDialog(null, "Employee Added Successfully!");
+
+            } catch (IOException e1) {
+                System.out.println("System Error: " + e1.getMessage());
+            }
+        });
+
+        updEmp.addActionListener(e -> {
+            int selectRow = table.getSelectedRow();
+
+            if (selectRow == -1) {
+                JOptionPane.showMessageDialog(null, "Select a record to update.");
+                return;
+            }
+
+            ArrayList<String> lists = new ArrayList<>();
+
+            try (BufferedReader br = new BufferedReader(new FileReader("employee.txt"))) {
+                String line;
+                int rowInd = 0;
+
+                if (rbMale.isSelected()) gender = "Male";
+                else if (rbFemale.isSelected()) gender = "Female";
+
+                while ((line = br.readLine()) != null) {
+                    if (rowInd == selectRow) {
+                        update = employeeID.getText() + " - " + name.getText() + " - " +
+                                dBirth.getText() + " - " + age.getText() + " - " +
+                                CivilStatus.getSelectedItem().toString() + " - " +
+                                nationality.getText() + " - " + gender + " - " +
+                                cNumber.getText() + " - " + email.getText() + " - " +
+                                dep.getText() + " - " + jobT.getText();
+
+                        lists.add(update);
+                    } else {
+                        lists.add(line);
+                    }
+                    rowInd++;
+                }
+
+            } catch (IOException z) {
+                System.err.println(z);
+            }
+
+            try (BufferedWriter bw = new BufferedWriter(new FileWriter("employee.txt"))) {
+                for (String record : lists) bw.write(record + "\n");
+            } catch (IOException z) {
+                System.out.println(z);
+            }
+
+            read();
+            JOptionPane.showMessageDialog(null, "Updated Successfully!");
+        });
+
+        delEmp.addActionListener(e -> {
+            int selectRow = table.getSelectedRow();
+
+            if (selectRow == -1) {
+                JOptionPane.showMessageDialog(null, "Select a record to delete.");
+                return;
+            }
+
+            int confirm = JOptionPane.showConfirmDialog(null,
+                    "Are you sure to delete this record?",
+                    "Confirm Delete", JOptionPane.YES_NO_OPTION);
+
+            if (confirm != JOptionPane.YES_OPTION) return;
+
+            ArrayList<String> lists = new ArrayList<>();
+
+            try (BufferedReader br = new BufferedReader(new FileReader("employee.txt"))) {
+                String line;
+                int rowInd = 0;
+
+                while ((line = br.readLine()) != null) {
+                    if (rowInd != selectRow) lists.add(line);
+                    rowInd++;
+                }
+
+            } catch (IOException z) {
+                System.err.println(z);
+            }
+
+            try (BufferedWriter bw = new BufferedWriter(new FileWriter("employee.txt"))) {
+                for (String record : lists) bw.write(record + "\n");
+            } catch (IOException z) {
+                System.out.println(z);
+            }
+
+            read();
+            JOptionPane.showMessageDialog(null, "Deleted Successfully!");
+        });
+
+        setTitle("EMPLOYEE MANAGEMENT SYSTEM");
+        setLayout(null);
+        setSize(800, 500);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setVisible(true);
+    }
+
+    public static void read() {
+        model.setRowCount(0);
+
+        try (BufferedReader br = new BufferedReader(new FileReader("employee.txt"))) {
+            String line;
+
+            while ((line = br.readLine()) != null) {
+                model.addRow(line.split(" - "));
+            }
+
+        } catch (IOException e) {
+            System.out.println("System Error: " + e.getMessage());
+        }
+    }
+
+    public static void main(String[] args) {
+        new Employee();
+    }
+}

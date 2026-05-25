@@ -1,0 +1,610 @@
+package guiTrial;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.*;
+import java.util.ArrayList;
+
+public class EmployeeSystem extends JFrame {
+
+    JTextField employeeID, name, age, dBirth,
+            nationality, cNumber, email, dep, jobT;
+
+    JRadioButton rbMale, rbFemale;
+
+    JComboBox<String> civilStatusBox;
+
+    JTable table;
+
+    DefaultTableModel model;
+
+    JButton addEmp, updEmp, delEmp, clearBtn;
+
+    String gender;
+
+    String[] status = {
+            "Single",
+            "Married",
+            "Widowed",
+            "Separated",
+            "Divorced"
+    };
+
+    EmployeeSystem() {
+
+        // FRAME
+        setTitle("Employee Management System");
+        setSize(950, 650);
+        setLayout(null);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+
+        // TITLE
+        JLabel title = new JLabel("EMPLOYEE MANAGEMENT SYSTEM");
+        title.setFont(new Font("Arial", Font.BOLD, 24));
+        title.setBounds(240, 20, 500, 30);
+        add(title);
+
+        // FORM PANEL
+        JPanel formPanel = new JPanel();
+        formPanel.setLayout(null);
+        formPanel.setBounds(20, 70, 300, 520);
+        formPanel.setBorder(
+                BorderFactory.createTitledBorder("Employee Form")
+        );
+
+        add(formPanel);
+
+        // EMPLOYEE ID
+        JLabel emID = new JLabel("Employee ID:");
+        emID.setBounds(20, 30, 120, 25);
+        formPanel.add(emID);
+
+        employeeID = new JTextField();
+        employeeID.setBounds(20, 55, 240, 30);
+        formPanel.add(employeeID);
+
+        // NAME
+        JLabel fname = new JLabel("Full Name:");
+        fname.setBounds(20, 95, 120, 25);
+        formPanel.add(fname);
+
+        name = new JTextField();
+        name.setBounds(20, 120, 240, 30);
+        formPanel.add(name);
+
+        // BIRTHDAY
+        JLabel dob = new JLabel("Date of Birth:");
+        dob.setBounds(20, 160, 120, 25);
+        formPanel.add(dob);
+
+        dBirth = new JTextField();
+        dBirth.setBounds(20, 185, 240, 30);
+        formPanel.add(dBirth);
+
+        // AGE
+        JLabel age1 = new JLabel("Age:");
+        age1.setBounds(20, 225, 120, 25);
+        formPanel.add(age1);
+
+        age = new JTextField();
+        age.setBounds(20, 250, 240, 30);
+        formPanel.add(age);
+
+        // CIVIL STATUS
+        JLabel cStatus = new JLabel("Civil Status:");
+        cStatus.setBounds(20, 290, 120, 25);
+        formPanel.add(cStatus);
+
+        civilStatusBox = new JComboBox<>(status);
+        civilStatusBox.setBounds(20, 315, 240, 30);
+        formPanel.add(civilStatusBox);
+
+        // NATIONALITY
+        JLabel national = new JLabel("Nationality:");
+        national.setBounds(20, 355, 120, 25);
+        formPanel.add(national);
+
+        nationality = new JTextField();
+        nationality.setBounds(20, 380, 240, 30);
+        formPanel.add(nationality);
+
+        // GENDER
+        JLabel lblGender = new JLabel("Gender:");
+        lblGender.setBounds(20, 420, 120, 25);
+        formPanel.add(lblGender);
+
+        rbMale = new JRadioButton("Male");
+        rbMale.setBounds(20, 445, 80, 25);
+        formPanel.add(rbMale);
+
+        rbFemale = new JRadioButton("Female");
+        rbFemale.setBounds(110, 445, 100, 25);
+        formPanel.add(rbFemale);
+
+        ButtonGroup genderGroup = new ButtonGroup();
+        genderGroup.add(rbMale);
+        genderGroup.add(rbFemale);
+
+        // RIGHT PANEL
+        JPanel rightPanel = new JPanel();
+        rightPanel.setLayout(null);
+        rightPanel.setBounds(340, 70, 570, 520);
+
+        rightPanel.setBorder(
+                BorderFactory.createTitledBorder("Employee Information")
+        );
+
+        add(rightPanel);
+
+        // CONTACT
+        JLabel contactNum = new JLabel("Contact Number:");
+        contactNum.setBounds(20, 30, 150, 25);
+        rightPanel.add(contactNum);
+
+        cNumber = new JTextField();
+        cNumber.setBounds(20, 55, 220, 30);
+        rightPanel.add(cNumber);
+
+        // EMAIL
+        JLabel myEmail = new JLabel("Email:");
+        myEmail.setBounds(300, 30, 100, 25);
+        rightPanel.add(myEmail);
+
+        email = new JTextField();
+        email.setBounds(300, 55, 220, 30);
+        rightPanel.add(email);
+
+        // DEPARTMENT
+        JLabel department = new JLabel("Department:");
+        department.setBounds(20, 100, 120, 25);
+        rightPanel.add(department);
+
+        dep = new JTextField();
+        dep.setBounds(20, 125, 220, 30);
+        rightPanel.add(dep);
+
+        // JOB TITLE
+        JLabel jobTitle = new JLabel("Job Title:");
+        jobTitle.setBounds(300, 100, 120, 25);
+        rightPanel.add(jobTitle);
+
+        jobT = new JTextField();
+        jobT.setBounds(300, 125, 220, 30);
+        rightPanel.add(jobT);
+
+        // BUTTONS
+        addEmp = new JButton("Add");
+        addEmp.setBounds(20, 180, 120, 35);
+        rightPanel.add(addEmp);
+
+        updEmp = new JButton("Update");
+        updEmp.setBounds(160, 180, 120, 35);
+        rightPanel.add(updEmp);
+
+        delEmp = new JButton("Delete");
+        delEmp.setBounds(300, 180, 120, 35);
+        rightPanel.add(delEmp);
+
+        clearBtn = new JButton("Clear");
+        clearBtn.setBounds(440, 180, 100, 35);
+        rightPanel.add(clearBtn);
+
+        // TABLE
+        String columns[] = {
+                "Employee ID",
+                "Full Name",
+                "Birth",
+                "Age",
+                "Civil Status",
+                "Nationality",
+                "Gender",
+                "Contact Number",
+                "Email",
+                "Department",
+                "Job Title"
+        };
+
+        model = new DefaultTableModel(columns, 0);
+
+        table = new JTable(model);
+
+        table.setRowHeight(25);
+
+        JScrollPane scPane = new JScrollPane(table);
+        scPane.setBounds(20, 240, 520, 240);
+
+        rightPanel.add(scPane);
+
+        table.getTableHeader().setBackground(
+                new Color(173, 216, 230)
+        );
+
+        // LOAD FILE
+        read();
+
+        // TABLE CLICK
+        table.addMouseListener(new MouseAdapter() {
+
+            public void mouseClicked(MouseEvent ev) {
+
+                int row = table.getSelectedRow();
+
+                employeeID.setText(
+                        model.getValueAt(row, 0).toString()
+                );
+
+                name.setText(
+                        model.getValueAt(row, 1).toString()
+                );
+
+                dBirth.setText(
+                        model.getValueAt(row, 2).toString()
+                );
+
+                age.setText(
+                        model.getValueAt(row, 3).toString()
+                );
+
+                civilStatusBox.setSelectedItem(
+                        model.getValueAt(row, 4).toString()
+                );
+
+                nationality.setText(
+                        model.getValueAt(row, 5).toString()
+                );
+
+                gender =
+                        model.getValueAt(row, 6).toString();
+
+                if (gender.equals("Male")) {
+
+                    rbMale.setSelected(true);
+
+                } else {
+
+                    rbFemale.setSelected(true);
+
+                }
+
+                cNumber.setText(
+                        model.getValueAt(row, 7).toString()
+                );
+
+                email.setText(
+                        model.getValueAt(row, 8).toString()
+                );
+
+                dep.setText(
+                        model.getValueAt(row, 9).toString()
+                );
+
+                jobT.setText(
+                        model.getValueAt(row, 10).toString()
+                );
+
+            }
+
+        });
+
+        // ADD BUTTON
+        addEmp.addActionListener(e -> {
+
+            addEmployee();
+
+        });
+
+        // UPDATE BUTTON
+        updEmp.addActionListener(e -> {
+
+            updateEmployee();
+
+        });
+
+        // DELETE BUTTON
+        delEmp.addActionListener(e -> {
+
+            deleteEmployee();
+
+        });
+
+        // CLEAR BUTTON
+        clearBtn.addActionListener(e -> {
+
+            clearFields();
+
+        });
+
+        setVisible(true);
+
+    }
+
+    // ADD EMPLOYEE
+    void addEmployee() {
+
+        try {
+
+            if (rbMale.isSelected()) {
+
+                gender = "Male";
+
+            } else if (rbFemale.isSelected()) {
+
+                gender = "Female";
+
+            }
+
+            FileWriter fw =
+                    new FileWriter("employee.txt", true);
+
+            fw.write(
+                    employeeID.getText() + " - " +
+                    name.getText() + " - " +
+                    dBirth.getText() + " - " +
+                    age.getText() + " - " +
+                    civilStatusBox.getSelectedItem() + " - " +
+                    nationality.getText() + " - " +
+                    gender + " - " +
+                    cNumber.getText() + " - " +
+                    email.getText() + " - " +
+                    dep.getText() + " - " +
+                    jobT.getText() + "\n"
+            );
+
+            fw.close();
+
+            read();
+
+            clearFields();
+
+            JOptionPane.showMessageDialog(
+                    null,
+                    "Employee Added Successfully!"
+            );
+
+        } catch (IOException e) {
+
+            JOptionPane.showMessageDialog(
+                    null,
+                    "System Error!"
+            );
+
+        }
+
+    }
+
+    // UPDATE
+    void updateEmployee() {
+
+        int row = table.getSelectedRow();
+
+        if (row == -1) {
+
+            JOptionPane.showMessageDialog(
+                    null,
+                    "Select Record First!"
+            );
+
+            return;
+
+        }
+
+        ArrayList<String> list = new ArrayList<>();
+
+        try {
+
+            BufferedReader br =
+                    new BufferedReader(
+                            new FileReader("employee.txt")
+                    );
+
+            String line;
+
+            int count = 0;
+
+            while ((line = br.readLine()) != null) {
+
+                if (count == row) {
+
+                    if (rbMale.isSelected()) {
+
+                        gender = "Male";
+
+                    } else {
+
+                        gender = "Female";
+
+                    }
+
+                    list.add(
+                            employeeID.getText() + " - " +
+                            name.getText() + " - " +
+                            dBirth.getText() + " - " +
+                            age.getText() + " - " +
+                            civilStatusBox.getSelectedItem() + " - " +
+                            nationality.getText() + " - " +
+                            gender + " - " +
+                            cNumber.getText() + " - " +
+                            email.getText() + " - " +
+                            dep.getText() + " - " +
+                            jobT.getText()
+                    );
+
+                } else {
+
+                    list.add(line);
+
+                }
+
+                count++;
+
+            }
+
+            br.close();
+
+            BufferedWriter bw =
+                    new BufferedWriter(
+                            new FileWriter("employee.txt")
+                    );
+
+            for (String data : list) {
+
+                bw.write(data);
+
+                bw.newLine();
+
+            }
+
+            bw.close();
+
+            read();
+
+            clearFields();
+
+            JOptionPane.showMessageDialog(
+                    null,
+                    "Updated Successfully!"
+            );
+
+        } catch (IOException e) {
+
+            System.out.println(e);
+
+        }
+
+    }
+
+    // DELETE
+    void deleteEmployee() {
+
+        int row = table.getSelectedRow();
+
+        if (row == -1) {
+
+            JOptionPane.showMessageDialog(
+                    null,
+                    "Select Record First!"
+            );
+
+            return;
+
+        }
+
+        ArrayList<String> list = new ArrayList<>();
+
+        try {
+
+            BufferedReader br =
+                    new BufferedReader(
+                            new FileReader("employee.txt")
+                    );
+
+            String line;
+
+            int count = 0;
+
+            while ((line = br.readLine()) != null) {
+
+                if (count != row) {
+
+                    list.add(line);
+
+                }
+
+                count++;
+
+            }
+
+            br.close();
+
+            BufferedWriter bw =
+                    new BufferedWriter(
+                            new FileWriter("employee.txt")
+                    );
+
+            for (String data : list) {
+
+                bw.write(data);
+
+                bw.newLine();
+
+            }
+
+            bw.close();
+
+            read();
+
+            clearFields();
+
+            JOptionPane.showMessageDialog(
+                    null,
+                    "Deleted Successfully!"
+            );
+
+        } catch (IOException e) {
+
+            System.out.println(e);
+
+        }
+
+    }
+
+    // READ FILE
+    void read() {
+
+        model.setRowCount(0);
+
+        try {
+
+            BufferedReader br =
+                    new BufferedReader(
+                            new FileReader("employee.txt")
+                    );
+
+            String line;
+
+            while ((line = br.readLine()) != null) {
+
+                String[] row = line.split(" - ");
+
+                model.addRow(row);
+
+            }
+
+            br.close();
+
+        } catch (IOException e) {
+
+            System.out.println(e);
+
+        }
+
+    }
+
+    // CLEAR FIELDS
+    void clearFields() {
+
+        employeeID.setText("");
+        name.setText("");
+        dBirth.setText("");
+        age.setText("");
+        nationality.setText("");
+        cNumber.setText("");
+        email.setText("");
+        dep.setText("");
+        jobT.setText("");
+
+        rbMale.setSelected(false);
+        rbFemale.setSelected(false);
+
+    }
+
+    public static void main(String[] args) {
+
+        new EmployeeSystem();
+
+    }
+
+}

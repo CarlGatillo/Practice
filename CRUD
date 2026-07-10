@@ -1,0 +1,129 @@
+package SessionTest;
+
+import java.util.ArrayList;
+import java.util.Scanner;
+
+public class CRUD {
+
+    static class Book {
+        int id;
+        String title;
+        double price;
+
+        // Constructor
+        Book(int id, String title, double price) {
+            this.id = id;
+            this.title = title;
+            this.price = price;
+        }
+    }
+
+    static ArrayList<Book> books = new ArrayList<Book>();
+    static int nextId = 1;
+    static Scanner scanner = new Scanner(System.in);
+
+    public static void main(String[] args) {
+        int choice = 0;
+
+        // while loop
+        while (choice != 5) {
+            System.out.println("\n===== SIMPLE BOOK CRUD =====");
+            System.out.println("1. Add Book");
+            System.out.println("2. View Books");
+            System.out.println("3. Update Book");
+            System.out.println("4. Delete Book");
+            System.out.println("5. Exit");
+            System.out.print("Choose an option: ");
+
+            choice = tryParseInt(scanner.nextLine());
+
+            if (choice == 1)
+                addBook();
+            else if (choice == 2)
+                viewBooks();
+            else if (choice == 3)
+                updateBook();
+            else if (choice == 4)
+                deleteBook();
+            else if (choice == 5)
+                System.out.println("Goodbye!");
+            else
+                System.out.println("Invalid option, try again.");
+        }
+    }
+
+    // CREATE
+    static void addBook() {
+        System.out.print("Enter title: ");
+        String title = scanner.nextLine();
+        System.out.print("Enter price: ");
+        double price = tryParseDouble(scanner.nextLine());
+
+        books.add(new Book(nextId, title, price));
+        nextId++;
+        System.out.println("Book added!");
+    }
+
+    // READ
+    static void viewBooks() {
+        if (books.isEmpty()) {
+            System.out.println("No books yet.");
+            return;
+        }
+        for (Book b : books) {
+            System.out.println(b.id + " | " + b.title + " | " + b.price);
+        }
+    }
+
+    // UPDATE
+    static void updateBook() {
+        System.out.print("Enter ID of book to update: ");
+        int id = tryParseInt(scanner.nextLine());
+
+        for (Book b : books) {
+            if (b.id == id) {
+                System.out.print("New title: ");
+                b.title = scanner.nextLine();
+                System.out.print("New price: ");
+                b.price = tryParseDouble(scanner.nextLine());
+                System.out.println("Book updated!");
+                return;
+            }
+        }
+        System.out.println("Book not found.");
+    }
+
+    // DELETE
+    static void deleteBook() {
+        System.out.print("Enter ID of book to delete: ");
+        int id = tryParseInt(scanner.nextLine());
+
+        for (int i = 0; i < books.size(); i++) {
+            if (books.get(i).id == id) {
+                books.remove(i);
+                System.out.println("Book deleted!");
+                return;
+            }
+        }
+        System.out.println("Book not found.");
+    }
+
+    // EXCEPTION HANDLING: catch bad input instead of crashing
+    static int tryParseInt(String text) {
+        try {
+            return Integer.parseInt(text);
+        } catch (NumberFormatException e) {
+            System.out.println("That is not a valid whole number.");
+            return -1;
+        }
+    }
+
+    static double tryParseDouble(String text) {
+        try {
+            return Double.parseDouble(text);
+        } catch (NumberFormatException e) {
+            System.out.println("That is not a valid number.");
+            return -1;
+        }
+    }
+}

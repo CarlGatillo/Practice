@@ -1,0 +1,53 @@
+package SessionTest;
+
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+
+public class GUI extends JFrame implements ActionListener {
+
+    private JTextField nameField;
+    private JButton greetButton;
+    private JLabel resultLabel;
+
+    public GUI() {
+        setTitle("Simple GUI Example");
+        setSize(400, 200);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setLayout(new FlowLayout());
+
+        nameField = new JTextField(15);
+        greetButton = new JButton("Tawagi ko");
+        resultLabel = new JLabel("Diria ka mugawas.");
+
+        // Hook the button up to this class's actionPerformed method
+        greetButton.addActionListener(this);
+
+        add(new JLabel("Enter your name:"));
+        add(nameField);
+        add(greetButton);
+        add(resultLabel);
+
+        setVisible(true);
+    }
+
+    // This runs automatically whenever greetButton is clicked
+    public void actionPerformed(ActionEvent e) {
+        String name = nameField.getText().trim();
+        if (name.isEmpty()) {
+            resultLabel.setText("Please type a name first.");
+        } else {
+            resultLabel.setText("Hello, " + name + "! Welcome to Java GUI.");
+        }
+    }
+
+    public static void main(String[] args) {
+        new GUI();
+    }
+}
